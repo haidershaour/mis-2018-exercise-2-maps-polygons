@@ -38,6 +38,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.Manifest;
+import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 import static java.lang.Math.PI;
 
@@ -59,8 +69,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public TextView textView;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+       // ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+       // onRequestPermissionsResult (1, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, new int[]{1});
+
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_maps);
@@ -70,22 +85,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         editText = (EditText) findViewById(R.id.input);
 
-        //get liacation service
+        //获取定位服务
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        //get provider
+        //获取当前可用的位置控制器
         List<String> list = locationManager.getProviders(true);
 
         if (list.contains(LocationManager.GPS_PROVIDER)) {
-            //if gps providr
+            //是否为GPS位置控制器
             provider = LocationManager.GPS_PROVIDER;
         } else if (list.contains(LocationManager.NETWORK_PROVIDER)) {
-            //if net provider
+            //是否为网络位置控制器
             provider = LocationManager.NETWORK_PROVIDER;
 
         } else {
-            Toast.makeText(this, "please check the GPS",
-                    Toast.LENGTH_LONG).show();
-            return;
+
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+            onCreate(savedInstanceState);
+            //onRequestPermissionsResult (1, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, new int[]{1});
+
+
+//            Toast.makeText(this, "please check the GPS",
+//                    Toast.LENGTH_LONG).show();
+//            return;
         }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -109,6 +131,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
 
+                //System.out.println("0000000000");
                 creatpolygon();
                 button.setText("End Polygon");
 
@@ -117,6 +140,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     }
+
+
 
     public void creatpolygon() {
         double area = 0;
